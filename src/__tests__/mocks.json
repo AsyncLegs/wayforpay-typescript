@@ -1,0 +1,30 @@
+{
+  "expectedBuiltForm": "<form method=\"POST\" action=\"https://secure.wayforpay.com/pay\" accept-charset=\"utf-8\"><input type=\"hidden\" name=\"merchantDomainName[]\" value=\"www.market.ua\" /><input type=\"hidden\" name=\"authorizationType[]\" value=\"SimpleSignature\" /><input type=\"hidden\" name=\"orderReference[]\" value=\"DH783023\" /><input type=\"hidden\" name=\"orderDate[]\" value=\"1415379863\" /><input type=\"hidden\" name=\"amount[]\" value=\"1547.36\" /><input type=\"hidden\" name=\"currency[]\" value=\"UAH\" /><input type=\"hidden\" name=\"productName[]\" value=\"Процессор Intel Core i5-4670 3.4GHz\" /><input type=\"hidden\" name=\"productPrice[]\" value=\"1000\" /><input type=\"hidden\" name=\"productCount[]\" value=\"1\" /><input type=\"hidden\" name=\"clientFirstName[]\" value=\"Вася\" /><input type=\"hidden\" name=\"clientLastName[]\" value=\"Васечкин\" /><input type=\"hidden\" name=\"clientEmail[]\" value=\"some@mail.com\" /><input type=\"hidden\" name=\"clientPhone[]\" value=\"380631234567\" /><input type=\"hidden\" name=\"language[]\" value=\"UA\" /><input type=\"hidden\" name=\"merchantTransactionSecureType[]\" value=\"AUTO\" /><input type=\"hidden\" name=\"transactionType[]\" value=\"PURCHASE\" /><input type=\"hidden\" name=\"merchantAccount[]\" value=\"test_merch_n1\" /><input type=\"hidden\" name=\"merchantSignature[]\" value=\"c8309023a6dfcefcfe8b16a0b94b82bf\" /><input type=\"submit\" value=\"Pay some\"></form>",
+  "configurationBuildForm": {
+    "merchantDomainName": "www.market.ua",
+    "authorizationType": "SimpleSignature",
+    "orderReference": "DH783023",
+    "orderDate": "1415379863",
+    "amount": "1547.36",
+    "currency": "UAH",
+    "productName": "Процессор Intel Core i5-4670 3.4GHz",
+    "productPrice": "1000",
+    "productCount": "1",
+    "clientFirstName": "Вася",
+    "clientLastName": "Васечкин",
+    "clientEmail": "some@mail.com",
+    "clientPhone": "380631234567",
+    "language": "UA",
+    "merchantTransactionSecureType": "AUTO"
+  },
+  "configurationAccount2Card": {
+    "transactionType": "P2P_CREDIT",
+    "merchantAuthType": "SimpleSignature",
+    "apiVersion": 1,
+    "orderReference": "myOrder1",
+    "amount": 10.13,
+    "currency": "UAH",
+    "cardBeneficiary": "4111111111111111",
+    "rec2Token": ""
+  }
+}
