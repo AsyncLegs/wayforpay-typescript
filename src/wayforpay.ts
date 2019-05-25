@@ -218,7 +218,7 @@ export class Wayforpay {
         headers: {
           "Content-Type": `application/json; charset=${this.DEFAULT_CHARSET}`
         },
-        method: "put"
+        method: "post"
       });
       return result.json();
     } catch (e) {
