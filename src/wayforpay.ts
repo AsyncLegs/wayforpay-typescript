@@ -1,16 +1,16 @@
-import { createHmac } from "crypto";
-import { each, isArray, isEmpty, union, values } from "lodash";
-import fetch from "node-fetch";
-import { Actions } from "./actions";
-import { Fields } from "./fields";
-import { propertyExists, serialize } from "./utils";
+import { createHmac } from 'crypto';
+import { each, isArray, isEmpty, union, values } from 'lodash';
+import { Actions } from './actions';
+import { propertyExists, serialize } from './utils';
+import { request } from './transport';
+import { HttpMethod } from './transport/enums';
 export class Wayforpay {
-  private PURCHASE_URL = "https://secure.wayforpay.com/pay";
-  private API_URL = "https://api.wayforpay.com/api";
-  private WIDGET_URL = "https://secure.wayforpay.com/server/pay-widget.js";
-  private FIELDS_DELIMITER = ";";
+  private PURCHASE_URL = 'https://secure.wayforpay.com/pay';
+  private API_URL = 'https://api.wayforpay.com/api';
+  private WIDGET_URL = 'https://secure.wayforpay.com/server/pay-widget.js';
+  private FIELDS_DELIMITER = ';';
   private API_VERSION = 1;
-  private DEFAULT_CHARSET = "utf-8";
+  private DEFAULT_CHARSET = 'utf-8';
   private action: Actions = Actions.INITIAL;
   private fields: any;
 
@@ -142,7 +142,7 @@ export class Wayforpay {
     return `<form method="POST" action="${
       this.PURCHASE_URL
     }" accept-charset="utf-8">${inputs.join(
-      ""
+      ''
     )}<input type="submit" value="${submitTitle}"></form>`.trim();
   }
   /**
@@ -184,7 +184,7 @@ export class Wayforpay {
     }
 
     window.addEventListener("message", ${
-      callback ? callback : "receiveMessage"
+      callback ? callback : 'receiveMessage'
     } );
 
     function receiveMessage(event){
@@ -213,14 +213,13 @@ export class Wayforpay {
   private async api<T>(fields: any): Promise<any> {
     const body = JSON.stringify(fields);
     try {
-      const result = await fetch(this.API_URL, {
+      return await request(this.API_URL, {
         body,
         headers: {
-          "Content-Type": `application/json; charset=${this.DEFAULT_CHARSET}`
+          'Content-Type': `application/json; charset=${this.DEFAULT_CHARSET}`
         },
-        method: "post"
+        method: HttpMethod.POST
       });
-      return result.json();
     } catch (e) {
       throw Error(e);
     }
@@ -278,15 +277,15 @@ export class Wayforpay {
 
   private getFieldsNameForSignature() {
     const purchaseFieldsAlias = [
-      "merchantAccount",
-      "merchantDomainName",
-      "orderReference",
-      "orderDate",
-      "amount",
-      "currency",
-      "productName",
-      "productCount",
-      "productPrice"
+      'merchantAccount',
+      'merchantDomainName',
+      'orderReference',
+      'orderDate',
+      'amount',
+      'currency',
+      'productName',
+      'productCount',
+      'productPrice'
     ];
     switch (this.action) {
       case Actions.PURCHASE:
@@ -295,34 +294,34 @@ export class Wayforpay {
         return purchaseFieldsAlias;
 
       case Actions.COMPLETE_3DS:
-        return ["transactionType", "authorization_ticket", "d3ds_pares"];
+        return ['transactionType', 'authorization_ticket', 'd3ds_pares'];
 
       case Actions.ACCEPT:
-        return ["orderReference", "status", "time"];
+        return ['orderReference', 'status', 'time'];
 
       case Actions.CHECK_STATUS:
-        return ["merchantAccount", "orderReference"];
+        return ['merchantAccount', 'orderReference'];
 
       case Actions.SETTLE:
       case Actions.REFUND:
-        return ["merchantAccount", "orderReference", "amount", "currency"];
+        return ['merchantAccount', 'orderReference', 'amount', 'currency'];
 
       case Actions.P2P_CREDIT:
         return [
-          "merchantAccount",
-          "orderReference",
-          "amount",
-          "currency",
-          "cardBeneficiary",
-          "rec2Token"
+          'merchantAccount',
+          'orderReference',
+          'amount',
+          'currency',
+          'cardBeneficiary',
+          'rec2Token'
         ];
       case Actions.P2_PHONE:
         return [
-          "merchantAccount",
-          "orderReference",
-          "amount",
-          "currency",
-          "phone"
+          'merchantAccount',
+          'orderReference',
+          'amount',
+          'currency',
+          'phone'
         ];
       default:
         throw new Error(`Unknown transaction type: ${this.action}`);
@@ -348,9 +347,9 @@ export class Wayforpay {
         if (isArray(value)) {
           const arrayValue = values(value);
           const str = arrayValue.join(this.FIELDS_DELIMITER);
-          data.push(str + "");
+          data.push(str + '');
         } else {
-          data.push(value + "");
+          data.push(value + '');
         }
       } else {
         errors.push(item);
@@ -362,105 +361,105 @@ export class Wayforpay {
     }
     const allDataValues = values(data);
 
-    return createHmac("md5", this.merchantPassword)
+    return createHmac('md5', this.merchantPassword)
       .update(allDataValues.join(this.FIELDS_DELIMITER))
-      .digest("hex");
+      .digest('hex');
   }
 
   private getRequiredFields() {
     switch (this.action) {
       case Actions.PURCHASE:
         return [
-          "merchantAccount",
-          "merchantDomainName",
-          "merchantTransactionSecureType",
-          "orderReference",
-          "orderDate",
-          "amount",
-          "currency",
-          "productName",
-          "productCount",
-          "productPrice"
+          'merchantAccount',
+          'merchantDomainName',
+          'merchantTransactionSecureType',
+          'orderReference',
+          'orderDate',
+          'amount',
+          'currency',
+          'productName',
+          'productCount',
+          'productPrice'
         ];
       case Actions.SETTLE:
         return [
-          "transactionType",
-          "merchantAccount",
-          "orderReference",
-          "amount",
-          "currency",
-          "apiVersion"
+          'transactionType',
+          'merchantAccount',
+          'orderReference',
+          'amount',
+          'currency',
+          'apiVersion'
         ];
       case Actions.ACCEPT:
-        return ["orderReference", "status", "time"];
+        return ['orderReference', 'status', 'time'];
       case Actions.CHARGE:
         const required = [
-          "transactionType",
-          "merchantAccount",
-          "merchantDomainName",
-          "orderReference",
-          "apiVersion",
-          "orderDate",
-          "amount",
-          "currency",
-          "productName",
-          "productCount",
-          "productPrice"
+          'transactionType',
+          'merchantAccount',
+          'merchantDomainName',
+          'orderReference',
+          'apiVersion',
+          'orderDate',
+          'amount',
+          'currency',
+          'productName',
+          'productCount',
+          'productPrice'
         ];
-        const additional = this.fields["recToken"]
-          ? ["recToken"]
-          : ["card", "expMonth", "expYear", "cardCvv", "cardHolder"];
+        const additional = this.fields['recToken']
+          ? ['recToken']
+          : ['card', 'expMonth', 'expYear', 'cardCvv', 'cardHolder'];
         return union(required, additional);
       case Actions.REFUND:
         return [
-          "transactionType",
-          "merchantAccount",
-          "orderReference",
-          "amount",
-          "currency",
-          "comment",
-          "apiVersion"
+          'transactionType',
+          'merchantAccount',
+          'orderReference',
+          'amount',
+          'currency',
+          'comment',
+          'apiVersion'
         ];
       case Actions.CHECK_STATUS:
         return [
-          "transactionType",
-          "merchantAccount",
-          "orderReference",
-          "apiVersion"
+          'transactionType',
+          'merchantAccount',
+          'orderReference',
+          'apiVersion'
         ];
       case Actions.COMPLETE_3DS:
-        return ["transactionType", "authorization_ticket", "d3ds_pares"];
+        return ['transactionType', 'authorization_ticket', 'd3ds_pares'];
       case Actions.P2P_CREDIT:
         return [
-          "transactionType",
-          "merchantAccount",
-          "orderReference",
-          "amount",
-          "currency",
-          "cardBeneficiary",
-          "merchantSignature"
+          'transactionType',
+          'merchantAccount',
+          'orderReference',
+          'amount',
+          'currency',
+          'cardBeneficiary',
+          'merchantSignature'
         ];
       case Actions.CREATE_INVOICE:
         return [
-          "transactionType",
-          "merchantAccount",
-          "merchantDomainName",
-          "orderReference",
-          "amount",
-          "currency",
-          "productName",
-          "productCount",
-          "productPrice"
+          'transactionType',
+          'merchantAccount',
+          'merchantDomainName',
+          'orderReference',
+          'amount',
+          'currency',
+          'productName',
+          'productCount',
+          'productPrice'
         ];
       case Actions.P2_PHONE:
         return [
-          "merchantAccount",
-          "orderReference",
-          "orderDate",
-          "currency",
-          "amount",
-          "phone",
-          "apiVersion"
+          'merchantAccount',
+          'orderReference',
+          'orderDate',
+          'currency',
+          'amount',
+          'phone',
+          'apiVersion'
         ];
       default:
         throw new Error(`Unknown transaction type`);
