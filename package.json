@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/AsyncLegs/wayforpay-typescript#readme",
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
